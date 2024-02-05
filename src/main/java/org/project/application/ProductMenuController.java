@@ -1,15 +1,17 @@
 package org.project.application;
 
 import org.project.product.Product;
-import org.project.product.ProductResource;
+import org.project.product.ProductDAO;
 
 import javax.swing.*;
 import java.util.List;
 
 public class ProductMenuController {
+    static ProductDAO dao = new ProductDAO();
     public static void run(){
+
         int choice;
-        Long id;
+        long id;
         try {
             do {
                 String input = JOptionPane.showInputDialog("Selecione uma opção:\n" +
@@ -24,7 +26,7 @@ public class ProductMenuController {
                 switch (choice) {
 
                     case 1:
-                        List<Product> products = ProductResource.getProducts();
+                        List<Product> products = dao.findAll();
                         String list = "";
                         for (Product p : products) {
                             list += p.toString() + "\n";
@@ -33,7 +35,7 @@ public class ProductMenuController {
                         break;
                     case 2:
                        id = Long.parseLong(JOptionPane.showInputDialog(null, "Informe o ID do Produto"));
-                       Product p = ProductResource.getProduct(id);
+                       Product p = dao.findById(id);
                        JOptionPane.showMessageDialog(null, p.toString());
 
                        break;
@@ -45,7 +47,7 @@ public class ProductMenuController {
                         break;
                     case 5:
                         id = Long.parseLong(JOptionPane.showInputDialog(null, "Informe o ID do Produto que deseja excluir"));
-                        ProductResource.deleteProduct(id);
+                        dao.delete(id);
                         JOptionPane.showMessageDialog(null, "Produto excluído com sucesso!");
                         break;
                     default:
@@ -79,7 +81,7 @@ public class ProductMenuController {
             }
             Product product = new Product(name, description, value);
 
-            ProductResource.insertProduct(product);
+            dao.save(product);
 
             return product;
         } catch (NumberFormatException e) {
@@ -94,7 +96,7 @@ public class ProductMenuController {
     public static Product updateProduct(){
         try {
             Long id = Long.parseLong(JOptionPane.showInputDialog("Digite o ID do produto que deseja atualizar:"));
-            Product product = ProductResource.getProduct(id);
+            Product product = dao.findById(id);
             String name = JOptionPane.showInputDialog("Digite o nome do produto:");
             while (name.length() < 2) {
                 name = JOptionPane.showInputDialog("Nome deve ter no mínimo 2 caracteres:");
@@ -113,7 +115,7 @@ public class ProductMenuController {
             product.setDescription(description);
             product.setValue(value);
 
-            ProductResource.updateProduct(id, product);
+            dao.update(product);
 
             return product;
         } catch (NumberFormatException e) {
